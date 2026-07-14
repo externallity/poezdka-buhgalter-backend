@@ -37,13 +37,18 @@ class Operation(Base):
     trip_id: Mapped[int] = mapped_column(ForeignKey("trips.id"), index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     created_by_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    type: Mapped[OperationType] = mapped_column(Enum(OperationType, name="operation_type"))
+    type: Mapped[OperationType] = mapped_column(
+        Enum(OperationType, name="operation_type", values_callable=lambda e: [x.value for x in e])
+    )
     amount: Mapped[int] = mapped_column(Integer)
     category: Mapped[ExpenseCategory | None] = mapped_column(
-        Enum(ExpenseCategory, name="expense_category"), nullable=True
+        Enum(ExpenseCategory, name="expense_category", values_callable=lambda e: [x.value for x in e]),
+        nullable=True,
     )
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)
-    source: Mapped[OperationSource] = mapped_column(Enum(OperationSource, name="operation_source"))
+    source: Mapped[OperationSource] = mapped_column(
+        Enum(OperationSource, name="operation_source", values_callable=lambda e: [x.value for x in e])
+    )
     split_group_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True, index=True)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     deleted_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
